@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import testSpringBoot.tests.controller.StudentController;
@@ -26,16 +25,16 @@ public class StudentControllerTestWeb {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private StudentRepository studentRepository;
 
-    @MockitoBean
+    @MockBean
     private FacultyRepository facultyRepository;
 
-    @MockitoSpyBean
+    @MockBean
     private StudentService studentService;
 
-    @MockitoSpyBean
+    @MockBean
     private FacultyService facultyService;
 
     @InjectMocks
