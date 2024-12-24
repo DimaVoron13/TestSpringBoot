@@ -8,5 +8,11 @@ import java.util.Optional;
 
 @Repository
 public interface AvatarRepository extends JpaRepository<Avatar, Long> {
-    Optional<Avatar> findByStudent_studentId(Long studentId);
+
+    public Optional<Avatar> findByStudentId(Long studentId);
+
+    public boolean existsByStudentId(Long studentId);
+
+    public void deleteByStudentId(Long studentId);
+
 }

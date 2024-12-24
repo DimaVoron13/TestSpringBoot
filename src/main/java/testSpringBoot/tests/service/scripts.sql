@@ -1,11 +1,15 @@
 SELECT * FROM student
-WHERE age BETWEEN 25 AND 30;
 
-SELECT name
-FROM student;
+SELECT * FROM student
+where age between 10 and 20
 
-SELECT * FROM student WHERE name LIKE '%О%';
+SELECT name FROM student
 
-SELECT * FROM student WHERE age < id;
+SELECT * FROM student
+where name like '%i%'
 
-SELECT * FROM student ORDER BY age;
+SELECT * FROM student
+where age < id
+
+SELECT * FROM student
+order by age

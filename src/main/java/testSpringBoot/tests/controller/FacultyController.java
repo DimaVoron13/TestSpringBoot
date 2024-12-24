@@ -1,53 +1,57 @@
 package testSpringBoot.tests.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.service.FacultyService;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
-@RequestMapping("/faculty")
+@RequestMapping("faculty")
 public class FacultyController {
-    @Autowired
-    private FacultyService facultyService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Faculty> getFaculty(@PathVariable Long facultyId) {
-        Faculty faculty = facultyService.getFacultyById(facultyId);
-        return new ResponseEntity<>(faculty, HttpStatus.OK);
+    private final FacultyService facultyService;
+
+    public FacultyController(FacultyService facultyService) {
+        this.facultyService = facultyService;
     }
 
     @PostMapping
-    public ResponseEntity<Faculty> createFaculty(@RequestParam String name, @RequestParam String color) {
-        Faculty faculty = facultyService.createFaculty(name, color);
-        return new ResponseEntity<>(faculty, HttpStatus.CREATED);
+    public ResponseEntity<Faculty> createFaculty(@Valid @RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.createFaculty(faculty));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long facultyId, @RequestParam String name, @RequestParam String color) {
-        Faculty faculty = facultyService.updateFaculty(facultyId, name, color);
-        return new ResponseEntity<>(faculty, HttpStatus.OK);
+    @GetMapping("{id}")
+    public ResponseEntity<Faculty> readFaculty(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.readFaculty(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteFaculty(@PathVariable Long facultyId) {
-        facultyService.deleteFaculty(facultyId);
-        return new ResponseEntity<>("Faculty deleted successfully", HttpStatus.OK);
-
+    @GetMapping
+    public Collection<Faculty> readAllFaculties() {
+        return facultyService.readAllFaculties();
     }
 
-    @GetMapping("/color/{color}")
-    public List<Faculty> getFacultyByColor(@PathVariable String color) {
-        return facultyService.getFacultyByColor(color);
+    @PutMapping
+    public ResponseEntity<Faculty> updateFaculty(@Valid @RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.updateFaculty(faculty));
     }
 
-    @GetMapping("/{id}/students")
-    public List<Student> getStudentByFaculty(@PathVariable Long facultyId) {
-        return facultyService.getStudentByFaculty(facultyId);
+    @DeleteMapping("{id}")
+    public void deleteFaculty(@PathVariable Long id) {
+        facultyService.deleteFaculty(id);
+    }
+
+    @GetMapping("filter")
+    public Collection<Faculty> filterFacultiesByNameOrColor(@RequestParam(required = false) String color,
+                                                            @RequestParam(required = false) String name) {
+        return facultyService.filterFacultiesByColorOrName(color, name);
+    }
+
+    @GetMapping("get/students/{id}")
+    public Collection<Student> getStudentsByFacultyId(@PathVariable Long id) {
+        return facultyService.getStudentsByFacultyId(id);
     }
 }

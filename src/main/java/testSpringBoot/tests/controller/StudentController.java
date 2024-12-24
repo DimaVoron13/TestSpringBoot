@@ -1,55 +1,63 @@
 package testSpringBoot.tests.controller;
 
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.service.StudentService;
 
-import java.util.List;
-
+import java.util.Collection;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("student")
 public class StudentController {
+
     private final StudentService studentService;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
-    @GetMapping
-    public ResponseEntity<Student> getStudent(@PathVariable int studentId) {
-        Student student = studentService.getStudentById(studentId);
-        return new ResponseEntity<>(new Student(), HttpStatus.OK);
-    }
-
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestParam String name, @RequestParam int age) {
-        Student student = studentService.createStudent(name, age);
-        return new ResponseEntity<>(student, HttpStatus.CREATED);
+    public ResponseEntity<Student> createStudent(@RequestBody @Valid Student student) {
+        return ResponseEntity.ok(studentService.createStudent(student));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable Long studentId, @RequestParam String name, @RequestParam int age) {
-        Student student = studentService.updateStudent(studentId, name, age);
-        return new ResponseEntity<>(student, HttpStatus.OK);
+    @GetMapping("{id}")
+    public ResponseEntity<Student> readStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.readStudent(id));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudent(@PathVariable Long studentId) {
-        studentService.deleteStudent(studentId);
-        return new ResponseEntity<>("Faculty deleted successfully", HttpStatus.OK);
+    @GetMapping
+    public Collection<Student> readAllStudents() {
+        return studentService.readAllStudents();
     }
 
-    @GetMapping("/age/{age}")
-    public List<Student> getStudentsByAge(@PathVariable int age) {
-        return studentService.getStudentsByAge(age);
+    @PutMapping
+    public ResponseEntity<Student> updateStudent(@RequestBody @Valid Student student) {
+        return ResponseEntity.ok(studentService.updateStudent(student));
     }
 
-    @GetMapping("/{id}")
-    public Faculty getFacultyByStudentId(@PathVariable Long studentId) {
-        return studentService.getFacultyByStudentId(studentId);
+    @DeleteMapping("{id}")
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+    }
+
+    @GetMapping("filter")
+    public ResponseEntity<Collection<Student>> filterStudentsByAge(@RequestParam @PositiveOrZero int age) {
+        return ResponseEntity.ok(studentService.filterStudentsByAge(age));
+    }
+
+    @GetMapping("filter/between")
+    public ResponseEntity<Collection<Student>> filterStudentsByAgeBetween(@RequestParam @PositiveOrZero int min,
+                                                                          @RequestParam @PositiveOrZero int max) {
+        return ResponseEntity.ok(studentService.filterByAgeBetween(min, max));
+    }
+
+    @GetMapping("get/faculty/{id}")
+    public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getFacultyByStudentId(id));
     }
 }

@@ -1,103 +1,74 @@
 package testSpringBoot.tests.service;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import testSpringBoot.tests.exception.StudentNotFoundException;
-import testSpringBoot.tests.model.Avatar;
+import testSpringBoot.tests.exception.*;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
-import testSpringBoot.tests.repository.AvatarRepository;
 import testSpringBoot.tests.repository.StudentRepository;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-
+import java.util.Collection;
 
 @Service
 public class StudentService {
-    @Value("${path.to.avatar.folder}")
-    private String avatarsDir;
 
-    private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
 
-    public StudentService(AvatarRepository avatarRepository, StudentRepository studentRepository) {
-        this.avatarRepository = avatarRepository;
+    public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Student getStudentById(long studentId) {
-        return studentRepository.findById(studentId).get();
-    }
-
-    public Student createStudent(String name, int age) {
-        Student student = new Student();
-        student.setName(name);
-        student.setAge(age);
+    public Student createStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    public Student updateStudent(Long studentId, String name, int age) {
-        Student student = new Student();
-        student.setName(name);
-        student.setAge(age);
-        studentRepository.save(student);
-        return student;
+    public Student readStudent(Long id) {
+        return studentRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
-    public void deleteStudent(Long studentId) {
-        studentRepository.deleteById(studentId);
-    }
-
-    public List<Student> getStudentsByAge(int age) {
-        return studentRepository.getByAge(age);
-    }
-
-    public Faculty getFacultyByStudentId(Long studentId) {
-        Student student = studentRepository.findById(studentId).orElseThrow(
-                () -> new StudentNotFoundException("Student not found with id: " + studentId));
-        return student.getFaculty();
-    }
-
-    public Student findStudent(Long id) {
-        return studentRepository.findById(id).orElseThrow();
-    }
-
-    public Avatar findAvatar(Long studentId) {
-        return avatarRepository.findByStudent_studentId(studentId).orElseThrow();
-    }
-
-    public void uploadAvatar(Long studentId, MultipartFile file) throws IOException {
-        Student student = findStudent(studentId);
-
-        Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-
-        try (InputStream is = file.getInputStream();
-             OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-             BufferedInputStream bis = new BufferedInputStream(is, 1024);
-             BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-        ) {
-            bis.transferTo(bos);
+    public Collection<Student> readAllStudents() {
+        if (studentRepository.count() == 0) {
+            throw new NoStudentsException();
         }
 
-        Avatar avatar = avatarRepository.findByStudent_studentId(studentId).orElseGet(Avatar::new);
-        avatar.setStudent(student);
-        avatar.setFilePath(filePath.toString());
-        avatar.setFileSize(file.getSize());
-        avatar.setMediaType(file.getContentType());
-        avatar.setData(file.getBytes());
-
-        avatarRepository.save(avatar);
+        return studentRepository.findAll();
     }
 
-    private String getExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    public Student updateStudent(Student student) {
+        if (!studentRepository.existsById(student.getId())) {
+            throw new WrongIndexException();
+        }
+
+        return studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new WrongIndexException();
+        }
+
+        studentRepository.deleteById(id);
+    }
+
+    public Collection<Student> filterStudentsByAge(int age) {
+        return studentRepository.findByAge(age);
+    }
+
+    public Collection<Student> filterByAgeBetween(int min, int max) {
+        if (min > max) {
+            throw new AgeMinAboveMaxException();
+        }
+
+        return studentRepository.findByAgeBetween(min, max);
+    }
+
+    public Faculty getFacultyByStudentId(Long id) {
+        Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
+
+        Faculty faculty = student.getFaculty();
+        if (faculty == null) {
+            throw new NoFacultiesException();
+        }
+
+        return faculty;
     }
 }

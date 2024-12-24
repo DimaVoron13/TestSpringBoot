@@ -4,13 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import testSpringBoot.tests.model.Student;
 
-import java.util.List;
+import java.util.Collection;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    List<Student> getByAge(int age);
 
-    List<Student> findByAgeBetween(int minAge, int maxAge);
+    Collection<Student> findByAge(int age);
 
-    Student getById(Long studentId);
+    Collection<Student> findByAgeBetween(int min, int max);
 }
