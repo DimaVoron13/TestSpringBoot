@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import testSpringBoot.tests.model.Faculty;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Repository
 public interface FacultyRepository extends JpaRepository<Faculty, Long> {

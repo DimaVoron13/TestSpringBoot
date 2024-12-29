@@ -3,6 +3,7 @@ package testSpringBoot.tests.service;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Service
 @Transactional
 public class AvatarService {
+
     private final Path avatarsDir;
 
     private final StudentRepository studentRepository;
@@ -132,5 +134,14 @@ public class AvatarService {
         } catch (IOException e) {
             throw new FilesOperationStoppedException();
         }
+    }
+
+    public Collection<Avatar> readAvatarsByPages(Integer pageNumber, Integer pageSize) {
+        if (pageNumber <= 0 || pageSize <= 0) {
+            throw new PageSettingsUnderZero();
+        }
+
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        return avatarRepository.findAll(pageRequest).getContent();
     }
 }

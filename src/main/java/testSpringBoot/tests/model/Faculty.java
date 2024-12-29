@@ -1,9 +1,6 @@
 package testSpringBoot.tests.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 

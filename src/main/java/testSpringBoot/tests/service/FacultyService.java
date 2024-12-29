@@ -7,8 +7,12 @@ import testSpringBoot.tests.exception.WrongIndexException;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.repository.FacultyRepository;
+import testSpringBoot.tests.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class FacultyService {

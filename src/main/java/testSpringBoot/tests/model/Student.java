@@ -24,8 +24,7 @@ public class Student {
     @JsonIgnore
     private Faculty faculty;
 
-    public Student() {
-    }
+    public Student() {}
 
     public Student(String name, int age) {
         this.name = name;

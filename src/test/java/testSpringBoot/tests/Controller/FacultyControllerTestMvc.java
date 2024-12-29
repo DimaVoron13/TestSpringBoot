@@ -1,23 +1,31 @@
 package testSpringBoot.tests.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import org.json.JSONArray;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import testSpringBoot.tests.controller.FacultyController;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.repository.FacultyRepository;
+import testSpringBoot.tests.repository.StudentRepository;
 import testSpringBoot.tests.service.FacultyService;
+import testSpringBoot.tests.service.StudentService;
 
+import java.net.URI;
 import java.util.*;
 
 import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;

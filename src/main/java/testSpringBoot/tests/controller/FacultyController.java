@@ -8,6 +8,8 @@ import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.service.FacultyService;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("faculty")
@@ -40,8 +42,9 @@ public class FacultyController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteFaculty(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
         facultyService.deleteFaculty(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("filter")

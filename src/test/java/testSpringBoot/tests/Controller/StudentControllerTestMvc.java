@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import testSpringBoot.tests.controller.StudentController;
 import testSpringBoot.tests.model.Faculty;
@@ -15,6 +18,7 @@ import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.repository.StudentRepository;
 import testSpringBoot.tests.service.StudentService;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -190,5 +194,27 @@ public class StudentControllerTestMvc {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.name").value(faculty.getName()))
                 .andExpect(jsonPath("$.color").value(faculty.getColor()));
+    }
+
+    @DisplayName("Проверка на подсчет студентов")
+    @Test
+    public void countAllStudents() throws Exception {
+        when(studentRepository.countAllStudents()).thenReturn(1L);
+
+        mockMvc.perform(get("/student/count-students"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value(1L));
+    }
+
+    @DisplayName("Проверка на подсчет среднего возраста")
+    @Test
+    public void getAverageAge() throws Exception {
+        when(studentRepository.getAverageAge()).thenReturn(12.3);
+
+        mockMvc.perform(get("/student/get-average-age"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value(12.3));
     }
 }

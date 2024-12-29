@@ -1,5 +1,11 @@
 package testSpringBoot.tests.Controller;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.util.Json;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +16,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.bind.annotation.ResponseBody;
 import testSpringBoot.tests.model.Faculty;
 import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.repository.FacultyRepository;
@@ -255,8 +262,7 @@ public class FacultyControllerTestRest {
                 getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Student>>() {
-                }
+                new ParameterizedTypeReference<List<Student>>() {}
         );
 
         assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -278,4 +284,5 @@ public class FacultyControllerTestRest {
         studentRepository.deleteAll();
         facultyRepository.deleteAll();
     }
+
 }

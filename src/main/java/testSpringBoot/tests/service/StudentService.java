@@ -65,10 +65,22 @@ public class StudentService {
         Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
 
         Faculty faculty = student.getFaculty();
-        if (faculty == null) {
+        if(faculty == null) {
             throw new NoFacultiesException();
         }
 
         return faculty;
+    }
+
+    public Long countAllStudents() {
+        return studentRepository.countAllStudents();
+    }
+
+    public Double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    public Collection<Student> findFiveLast() {
+        return studentRepository.findFiveLast();
     }
 }
