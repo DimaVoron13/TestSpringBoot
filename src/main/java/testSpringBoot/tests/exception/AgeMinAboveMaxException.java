@@ -1,0 +1,15 @@
+package testSpringBoot.tests.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Min age must be less than max")
+public class AgeMinAboveMaxException extends RuntimeException {
+
+    public AgeMinAboveMaxException() {
+    }
+
+    public AgeMinAboveMaxException(String message) {
+        super(message);
+    }
+}
