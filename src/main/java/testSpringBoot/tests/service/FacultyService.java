@@ -1,5 +1,7 @@
 package testSpringBoot.tests.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import testSpringBoot.tests.exception.NoFacultiesException;
 import testSpringBoot.tests.exception.NoStudentsException;
@@ -9,30 +11,38 @@ import testSpringBoot.tests.model.Student;
 import testSpringBoot.tests.repository.FacultyRepository;
 import testSpringBoot.tests.repository.StudentRepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Time;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
 
     private final FacultyRepository facultyRepository;
 
+    Logger logger = LoggerFactory.getLogger(FacultyService.class);
+
     public FacultyService(FacultyRepository facultyRepository) {
         this.facultyRepository = facultyRepository;
     }
 
     public Faculty createFaculty(Faculty faculty) {
+        logger.info("Faculty create method invoked");
+
         return facultyRepository.save(faculty);
     }
 
     public Faculty readFaculty(Long id) {
+        logger.info("Faculty read method invoked");
+
         return facultyRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
     public Collection<Faculty> readAllFaculties() {
+        logger.info("Faculty read all method invoked");
+
         if (facultyRepository.count() == 0) {
+            logger.error("Faculty database is empty");
             throw new NoFacultiesException();
         }
 
@@ -40,7 +50,10 @@ public class FacultyService {
     }
 
     public Faculty updateFaculty(Faculty faculty) {
+        logger.info("Faculty update method invoked");
+
         if (!facultyRepository.existsById(faculty.getId())) {
+            logger.error("Faculty could not be found");
             throw new WrongIndexException();
         }
 
@@ -48,7 +61,10 @@ public class FacultyService {
     }
 
     public void deleteFaculty(Long id) {
+        logger.info("Faculty delete method invoked");
+
         if (!facultyRepository.existsById(id)) {
+            logger.error("Faculty could not be found");
             throw new WrongIndexException();
         }
 
@@ -56,16 +72,39 @@ public class FacultyService {
     }
 
     public Collection<Faculty> filterFacultiesByColorOrName(String color, String name) {
+        logger.info("Faculty filter by color or name method invoked");
+
         return facultyRepository.findByColorIgnoreCaseOrNameIgnoreCase(color, name);
     }
 
 
     public Collection<Student> getStudentsByFacultyId(Long id) {
+        logger.info("Faculty get students method invoked");
+
         Collection<Student> students = facultyRepository.findById(id).orElseThrow(NoFacultiesException::new).getStudents();
         if (students.isEmpty()) {
+            logger.error("Students does not exist");
             throw new NoStudentsException();
         }
 
         return students;
+    }
+
+    public String findLongestFacultyName() {
+        logger.info("Faculty find longest name method invoked");
+
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .get();
+    }
+
+    public Integer getSmthIdk() {
+        logger.info("Faculty getSmthIdk method invoked");
+
+        return Stream.iterate(1, a -> a +1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, Integer::sum);
     }
 }

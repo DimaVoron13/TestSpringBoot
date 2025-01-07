@@ -31,8 +31,8 @@ public class StudentController {
     }
 
     @GetMapping
-    public Collection<Student> readAllStudents() {
-        return studentService.readAllStudents();
+    public ResponseEntity<Collection<Student>> readAllStudents() {
+        return ResponseEntity.ok(studentService.readAllStudents());
     }
 
     @PutMapping
@@ -75,5 +75,15 @@ public class StudentController {
     @GetMapping("find-five-last")
     public ResponseEntity<Collection<Student>> findFiveLast() {
         return ResponseEntity.ok(studentService.findFiveLast());
+    }
+
+    @GetMapping("find-start-with-A")
+    public ResponseEntity<Collection<String>> findStudentsWhoStartWithA() {
+        return ResponseEntity.ok(studentService.findStudentsNameStartWithA());
+    }
+
+    @GetMapping("get-average-age-v2")
+    public Double getAverageAgeV2() {
+        return studentService.getAverageAgeV2();
     }
 }
